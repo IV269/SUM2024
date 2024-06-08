@@ -28,7 +28,7 @@ class _mat4 {
   } // end of 'constructor' function
 
   translate(v) {
-    let m = new mat4();
+    let m = mat4();
     m.m[3][0] = v.x;
     m.m[3][1] = v.y;
     m.m[3][2] = v.z;
@@ -46,7 +46,7 @@ class _mat4 {
   } // end of 'scale' function
 
   rotateX(angle) {
-    let m = new mat4();
+    let m = mat4();
     let L = D2R(angle),
       co = Math.cos(L),
       si = Math.sin(L);
@@ -60,7 +60,7 @@ class _mat4 {
   } // end of 'rotateX' function
 
   rotateY(angle) {
-    let m = new mat4();
+    let m = mat4();
     let L = D2R(angle),
       co = Math.cos(L),
       si = Math.sin(L);
@@ -93,7 +93,7 @@ class _mat4 {
       si = Math.sin(L);
 
     let C = v.normalize();
-    let m = new mat4([
+    let m = mat4([
       [
         co + C.x * C.x * (1 - co),
         C.x * C.y * (1 - co) + C.z * si,
@@ -116,7 +116,7 @@ class _mat4 {
   } // end of 'rotate' function
 
   mul(m) {
-    let k = new mat4();
+    let k = mat4();
 
     k.m[0][0] =
       this.m[0][0] * m.m[0][0] +
@@ -203,7 +203,7 @@ class _mat4 {
   } // end of 'mul' function
 
   transpose(v) {
-    let r = new mat4();
+    let r = mat4();
 
     r.m[0][0] = this.m[0][0];
     r.m[0][1] = this.m[1][0];
@@ -271,7 +271,7 @@ class _mat4 {
 
   inverse() {
     let det = this.determ4();
-    let r = new mat4();
+    let r = mat4();
 
     if (det == 0) {
       return MatrIdentity();
@@ -318,7 +318,7 @@ class _mat4 {
       ]).determ3() / det;
 
     r.m[1][1] =
-      -mat4([
+      +mat4([
         [this.m[0][0], this.m[0][2], this.m[0][3], 0],
         [this.m[2][0], this.m[2][2], this.m[2][3], 0],
         [this.m[3][0], this.m[3][2], this.m[3][3], 0],
@@ -377,7 +377,7 @@ class _mat4 {
       -mat4([
         [this.m[0][1], this.m[0][2], this.m[0][3], 0],
         [this.m[1][1], this.m[1][2], this.m[1][3], 0],
-        [this.m[2][1], this.m[2][2], this.m[3][3], 0],
+        [this.m[2][1], this.m[2][2], this.m[2][3], 0],
         [0, 0, 0, 0],
       ]).determ3() / det;
 
@@ -399,9 +399,9 @@ class _mat4 {
 
     r.m[3][3] =
       +mat4([
-        [this.m[0][1], this.m[0][1], this.m[0][2], 0],
-        [this.m[1][1], this.m[1][1], this.m[1][2], 0],
-        [this.m[2][1], this.m[2][1], this.m[2][2], 0],
+        [this.m[0][0], this.m[0][1], this.m[0][2], 0],
+        [this.m[1][0], this.m[1][1], this.m[1][2], 0],
+        [this.m[2][0], this.m[2][1], this.m[2][2], 0],
         [0, 0, 0, 0],
       ]).determ3() / det;
 
@@ -409,21 +409,21 @@ class _mat4 {
   } // end of 'inverse' function
 
   view(Loc, At, Up1) {
-    Dir = At.sub(Loc).normalize();
-    Right = Dir.cross(Up1).normalize();
-    Up = Right.cross(Dir).normalize();
+    let Dir = At.sub(Loc).normalize();
+    let Right = Dir.cross(Up1).normalize();
+    let Up = Right.cross(Dir).normalize();
 
-    m = new mat4([
+    let m = mat4([
       [Right.x, Up.x, -Dir.x, 0],
       [Right.y, Up.y, -Dir.y, 0],
       [Right.z, Up.z, -Dir.z, 0],
-      [-Loc.Dot(Right), -Loc.Dot(Up), Loc.Dot(Dir), 1],
+      [-Loc.dot(Right), -Loc.dot(Up), Loc.dot(Dir), 1],
     ]);
     return m;
   } // end of 'view' function
 
   ortho(Left, Right, Bottom, Top, Near, Far) {
-    m = new mat4([
+    let m = mat4([
       [2 / (Right - Left), 0, 0, 0],
       [0, 2 / (Top - Bottom), 0, 0],
       [0, 0, -2 / (Far - Near), 0],
@@ -438,7 +438,7 @@ class _mat4 {
   } // end of 'ortho' function
 
   frustum(Left, Right, Bottom, Top, Near, Far) {
-    m = new mat4([
+    let m = mat4([
       [(2 * Near) / (Right - Left), 0, 0, 0],
       [0, (2 * Near) / (Top - Bottom), 0, 0],
       [

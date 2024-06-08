@@ -1,4 +1,4 @@
-/* FILE NAME: mat4.js
+/* FILE NAME: camera.js
  * PROGRAMMER: IV2
  * DATE: 07.06.2024
  * PURPOSE: matrix 4x4 library for 3D rendering.
@@ -85,5 +85,6 @@ class _Cam {
 
 export function Cam(...args) {
   return new _Cam(...args);
-} // end of 'mat4' function
-/* END OF 'mat4.js' FILE */
+} // end of 'Cam' function
+
+/* END OF 'camera.js' FILE */
