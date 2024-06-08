@@ -10,11 +10,13 @@ import "./matlib/camera.js";
 import "./reslib/buffers.js";
 import "./reslib/primitives.js";
 import "./reslib/shaders.js";
+import "./timer/timer.js";
 import { vec3 } from "./matlib/vec3.js";
 import { mat4 } from "./matlib/mat4.js";
 import { Cam } from "./matlib/camera.js";
 import { primitive, vertex } from "./reslib/primitives.js";
+import { Timer } from "./timer.js";
 
-export { mat4, vec3, Cam, primitive, vertex };
+export { mat4, vec3, Cam, primitive, vertex, Timer };
 
 console.log("Load done.");
