@@ -109,7 +109,7 @@ class Render {
       let t = this.Timer.localTime;
       this.gl.uniform1f(this.timeLoc, t);
     }
-  }
+  } // End of 'render' function
 }
 
 export function initGL() {
