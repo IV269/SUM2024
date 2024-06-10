@@ -6,12 +6,16 @@
 
 import { Timer } from "./lib.js";
 
-class Render {
+class _Render {
   constructor(canvas) {
     this.canvas = canvas;
 
+    this.projSize = 0.1;
+    this.projDist = 0.1;
+    this.farClip = 300;
+
     this.gl = canvas.getContext("webgl2");
-    gl.clearColor(0.8, 0.37, 0.42, 1);
+    this.gl.clearColor(0.8, 0.37, 0.42, 1);
 
     this.gl.enable(this.gl.DEPTH_TEST);
 
@@ -70,8 +74,8 @@ class Render {
     this.gl.attachShader(prg, fs);
     this.gl.linkProgram(prg);
 
-    if (!gl.getProgramParameter(prg, gl.LINK_STATUS)) {
-      let buf = gl.getProgramInfoLog(prg);
+    if (!this.gl.getProgramParameter(prg, this.gl.LINK_STATUS)) {
+      let buf = this.gl.getProgramInfoLog(prg);
       console.log("Shader program link fail: " + buf);
     }
     this.prg = prg;
@@ -98,10 +102,7 @@ class Render {
     return shader;
   } // End of 'loadShader' function
 
-  render() {
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-    this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
-
+  renderStart() {
     if (this.timeLoc != -1) {
       const date = new Date();
       this.Timer.response();
@@ -112,34 +113,7 @@ class Render {
   } // End of 'render' function
 }
 
-export function initGL() {
-  canvas = document.getElementById("tetrahedron");
-  gl = canvas.getContext("webgl2");
-  let prg = gl.createProgram();
-
-  gl.linkProgram(prg);
-
-  gl.clearColor(0.8, 0.37, 0.42, 1);
-  //gl.clearColor(0.3, 0.47, 0.8, 1);
-  //timeLoc = gl.getUniformLocation(prg, "Time");
-  //gl.useProgram(prg);
-} // End of 'initGL' function
-
-export function render() {
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  /*
-  if (timeLoc != -1) {
-    const date = new Date();
-    let t =
-      date.getMinutes() * 60 +
-      date.getSeconds() +
-      date.getMilliseconds() / 1000;
-
-    gl.uniform1f(timeLoc, t);
-  }
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  */
-} // End of 'render' function
-
+export function Render(...args) {
+  return new _Render(...args);
+} // end of 'Render' function
 /* END OF 'render.js' FILE */

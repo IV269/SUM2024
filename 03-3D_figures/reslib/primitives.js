@@ -4,6 +4,8 @@
  * PURPOSE: primitives library for 3D rendering.
  */
 
+import { vec3, mat4 } from "../lib.js";
+
 import "../lib.js";
 
 class _vertex {
@@ -18,8 +20,10 @@ export function vertex(...args) {
 } // end of 'vertex' function
 
 export function autoNormals(vertexes, indicies) {
+  let i;
+
   /* Set all vertex normals to zero */
-  for (let i = 0; i < vertexes.length; i++) {
+  for (i = 0; i < vertexes.length; i++) {
     vertexes[i].norm = vec3(0);
   }
 
@@ -31,7 +35,7 @@ export function autoNormals(vertexes, indicies) {
     let p0 = vertexes[n0].pos,
       p1 = vertexes[n1].pos,
       p2 = vertexes[n2].pos,
-      N = p1.sub(p0).cross(p2.sub(p0)).norm();
+      N = p1.sub(p0).cross(p2.sub(p0)).normalize();
 
     vertexes[n0].norm = vertexes[n0].norm.add(N);
     vertexes[n1].norm = vertexes[n1].norm.add(N);
@@ -40,12 +44,12 @@ export function autoNormals(vertexes, indicies) {
 
   /* Normalize all vertex normals */
   for (i = 0; i < vertexes.length; i++) {
-    vertexes[i].norm = vertexes[i].norm.norm();
+    vertexes[i].norm = vertexes[i].norm.normalize();
   }
 }
 
 class _primitive {
-  constructor(vertexes, indicies) {
+  constructor(rnd, vertexes, indicies) {
     let smt = [],
       i = 0;
 
@@ -59,45 +63,31 @@ class _primitive {
       smt[i++] = v.norm.y;
       smt[i++] = v.norm.z;
     }
-    this.vertexArrayId = window.gl.createVertexArray();
+    this.vertexArrayId = rnd.gl.createVertexArray();
 
-    window.gl.bindVertexArray(this.vertexArrayId);
-    this.vertexBufferId = window.gl.createBuffer();
+    rnd.gl.bindVertexArray(this.vertexArrayId);
+    this.vertexBufferId = rnd.gl.createBuffer();
 
-    window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.vertexBufferId);
-    window.gl.bufferData(
-      window.gl.ARRAY_BUFFER,
+    rnd.gl.bindBuffer(rnd.gl.ARRAY_BUFFER, this.vertexBufferId);
+    rnd.gl.bufferData(
+      rnd.gl.ARRAY_BUFFER,
       new Float32Array(smt),
-      window.gl.STATIC_DRAW,
+      rnd.gl.STATIC_DRAW,
     );
 
-    if (window.posLoc != -1) {
-      window.gl.vertexAttribPointer(
-        window.posLoc,
-        3,
-        window.gl.FLOAT,
-        false,
-        24,
-        0,
-      );
-      window.gl.enableVertexAttribArray(window.posLoc);
-      window.gl.vertexAttribPointer(
-        window.normLoc,
-        3,
-        window.gl.FLOAT,
-        false,
-        24,
-        12,
-      );
-      window.gl.enableVertexAttribArray(window.normLoc);
+    if (rnd.posLoc != -1) {
+      rnd.gl.vertexAttribPointer(rnd.posLoc, 3, rnd.gl.FLOAT, false, 24, 0);
+      rnd.gl.enableVertexAttribArray(rnd.posLoc);
+      rnd.gl.vertexAttribPointer(rnd.normLoc, 3, rnd.gl.FLOAT, false, 24, 12);
+      rnd.gl.enableVertexAttribArray(rnd.normLoc);
     }
 
-    this.IndexBufferId = window.gl.createBuffer();
-    window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, this.IndexBufferId);
-    window.gl.bufferData(
-      window.gl.ELEMENT_ARRAY_BUFFER,
+    this.IndexBufferId = rnd.gl.createBuffer();
+    rnd.gl.bindBuffer(rnd.gl.ELEMENT_ARRAY_BUFFER, this.IndexBufferId);
+    rnd.gl.bufferData(
+      rnd.gl.ELEMENT_ARRAY_BUFFER,
       new Uint32Array(indicies),
-      window.gl.STATIC_DRAW,
+      rnd.gl.STATIC_DRAW,
     );
 
     this.numOfElements = indicies.length;
@@ -135,23 +125,70 @@ class _primitive {
     }
   }
 
-  rndPrimDraw(world) {}
+  render(rnd, world) {
+    let m = mat4();
+
+    // if (this.timeLoc != -1) {
+    //   const date = new Date();
+    //   this.Timer.response();
+
+    //   let t = this.Timer.localTime;
+    //   this.gl.uniform1f(this.timeLoc, t);
+    // }
+
+    // let rx = rnd.projSize,
+    //   ry = rnd.projSize;
+
+    // /* Correct aspect ratio */
+    // if (rnd.width >= rnd.height) {
+    //   rx *= rnd.width / rnd.height;
+    // } else {
+    //   ry *= rnd.height / rnd.width;
+    // }
+
+    // m.frustum(-rx / 2, rx / 2, -ry / 2, ry / 2, rnd.projDist, rnd.farClip);
+
+    m = world.mul(mat4());
+
+    rnd.gl.uniformMatrix4fv(
+      rnd.matrProjLoc,
+      false,
+      new Float32Array([].concat(...m.m)),
+    );
+    rnd.gl.uniformMatrix4fv(
+      rnd.matrWLoc,
+      false,
+      new Float32Array([].concat(...world.m)),
+    );
+
+    rnd.gl.clear(rnd.gl.COLOR_BUFFER_BIT);
+    rnd.gl.clear(rnd.gl.DEPTH_BUFFER_BIT);
+    //rnd.gl.enable(rnd.gl.DEPTH_TEST);
+    rnd.gl.bindVertexArray(this.vertexArrayId);
+    rnd.gl.bindBuffer(rnd.gl.ELEMENT_ARRAY_BUFFER, this.IndexBufferId);
+    rnd.gl.drawElements(
+      rnd.gl.TRIANGLES,
+      this.numOfElements,
+      rnd.gl.UNSIGNED_SHORT,
+      0,
+    );
+  }
 
   rndPrimFree() {
     if (this.VA != 0) {
-      window.gl.bindVertexArray(this.VA);
-      window.gl.bindBuffer(GL_ARRAY_BUFFER, 0);
-      window.gl.deleteBuffer(1, this.VBuf);
-      window.gl.bindVertexArray(0);
-      window.gl.deleteVertexArray(1, this.VA);
+      rnd.gl.bindVertexArray(this.VA);
+      rnd.gl.bindBuffer(GL_ARRAY_BUFFER, 0);
+      rnd.gl.deleteBuffer(1, this.VBuf);
+      rnd.gl.bindVertexArray(0);
+      rnd.gl.deleteVertexArray(1, this.VA);
     }
     if (this.IBuf != 0) {
-      window.gl.deleteBuffer(1, this.IBuf);
+      rnd.gl.deleteBuffer(1, this.IBuf);
     }
   }
 } // end of '_primitives' class
 
-export function primCreate(...args) {
+export function primitive(...args) {
   return new _primitive(...args);
 } // end of 'primitive' function
 
