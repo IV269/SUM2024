@@ -6,35 +6,49 @@
 
 console.log("check");
 
-import { mat4, vec3, matrRotate, Cube, Tetrahedron, Render } from "./lib.js";
+import {
+  mat4,
+  vec3,
+  matrRotate,
+  Cube,
+  Tetrahedron,
+  Render,
+  Octahedron,
+  Icosahedron,
+} from "./lib.js";
 
 console.log("MAIN LOADED");
 
 function main() {
   let canvas1 = document.getElementById("myCan1");
   let canvas2 = document.getElementById("myCan2");
+  let canvas3 = document.getElementById("myCan3");
+  let canvas4 = document.getElementById("myCan4");
 
-  /* canvas1.addEventListener("mousemove", onClick1);
+  canvas1.addEventListener("mousemove", onClick1);
   canvas2.addEventListener("mousemove", onClick2);
   canvas1.addEventListener("wheel", onScroll);
   canvas2.addEventListener("wheel", onScroll);
-  */
-  console.log(matrRotate(45, vec3(0, 1, 0)));
 
   let rnd1 = new Render(canvas1);
   let rnd2 = new Render(canvas2);
+  let rnd3 = new Render(canvas3);
+  let rnd4 = new Render(canvas4);
 
   let cube = new Cube();
   let tetrahedron = new Tetrahedron();
+  let octahedron = new Octahedron();
+  let icosahedron = new Icosahedron();
   console.log(cube);
 
   let cubeprim = cube.makePrim(rnd1, mat4());
   let tetraprim = tetrahedron.makePrim(rnd2, mat4());
-  console.log(cubeprim);
+  let octaprim = octahedron.makePrim(rnd3, mat4());
+  let icosaprim = icosahedron.makePrim(rnd4, mat4());
 
-  let rnds = [rnd1, rnd2];
-  let prims = [cubeprim, tetraprim];
-  let figures = [cube, tetrahedron];
+  let rnds = [rnd1, rnd2, rnd3, rnd4];
+  let prims = [cubeprim, tetraprim, octaprim, icosaprim];
+  let figures = [cube, tetrahedron, octahedron, icosahedron];
 
   const draw = () => {
     for (let i = 0; i < rnds.length; i++) {
@@ -45,11 +59,11 @@ function main() {
       rnds[i].renderStart();
       prims[i].render(
         rnds[i],
-        mat4(), //.mul(matrRotate(0, vec3(0, 1, 0))),
+        mat4().mul(matrRotate(time, vec3(2, 1, 0))),
         //prims[i].matrix.mul(matrRotate(time, vec3(0, 1, 0))),
       );
-      window.requestAnimationFrame(draw);
     }
+    window.requestAnimationFrame(draw);
   };
   draw();
 }

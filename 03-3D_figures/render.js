@@ -62,7 +62,7 @@ class _Render {
         
         float k = dot(L, normalize(N));
 
-        OutColor = vec4(k * vec3(0.2, 0.9, 0.3), 1.0);
+        OutColor = vec4(DrawNormal, 1.0);
     }
     `;
 
@@ -103,6 +103,9 @@ class _Render {
   } // End of 'loadShader' function
 
   renderStart() {
+    //this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    //this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
+
     if (this.timeLoc != -1) {
       const date = new Date();
       this.Timer.response();

@@ -86,7 +86,7 @@ class _primitive {
     rnd.gl.bindBuffer(rnd.gl.ELEMENT_ARRAY_BUFFER, this.IndexBufferId);
     rnd.gl.bufferData(
       rnd.gl.ELEMENT_ARRAY_BUFFER,
-      new Uint32Array(indicies),
+      new Uint16Array(indicies),
       rnd.gl.STATIC_DRAW,
     );
 
@@ -128,28 +128,20 @@ class _primitive {
   render(rnd, world) {
     let m = mat4();
 
-    // if (this.timeLoc != -1) {
-    //   const date = new Date();
-    //   this.Timer.response();
+    let rx = rnd.projSize,
+      ry = rnd.projSize;
 
-    //   let t = this.Timer.localTime;
-    //   this.gl.uniform1f(this.timeLoc, t);
-    // }
+    /* Correct aspect ratio */
+    if (rnd.width >= rnd.height) {
+      rx *= rnd.width / rnd.height;
+    } else {
+      ry *= rnd.height / rnd.width;
+    }
 
-    // let rx = rnd.projSize,
-    //   ry = rnd.projSize;
-
-    // /* Correct aspect ratio */
-    // if (rnd.width >= rnd.height) {
-    //   rx *= rnd.width / rnd.height;
-    // } else {
-    //   ry *= rnd.height / rnd.width;
-    // }
-
-    // m.frustum(-rx / 2, rx / 2, -ry / 2, ry / 2, rnd.projDist, rnd.farClip);
+    m.frustum(-rx / 2, rx / 2, -ry / 2, ry / 2, rnd.projDist, rnd.farClip);
 
     m = world.mul(mat4());
-
+    console.log([].concat(...m.m));
     rnd.gl.uniformMatrix4fv(
       rnd.matrProjLoc,
       false,
@@ -163,8 +155,11 @@ class _primitive {
 
     rnd.gl.clear(rnd.gl.COLOR_BUFFER_BIT);
     rnd.gl.clear(rnd.gl.DEPTH_BUFFER_BIT);
+    rnd.gl.enable(rnd.gl.DEPTH_TEST);
+    rnd.gl.clearDepth(1.0);
+
     //rnd.gl.enable(rnd.gl.DEPTH_TEST);
-    rnd.gl.bindVertexArray(this.vertexArrayId);
+    //rnd.gl.bindVertexArray(this.vertexArrayId);
     rnd.gl.bindBuffer(rnd.gl.ELEMENT_ARRAY_BUFFER, this.IndexBufferId);
     rnd.gl.drawElements(
       rnd.gl.TRIANGLES,

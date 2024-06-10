@@ -5,10 +5,8 @@
  */
 import "./vec3.js";
 
-const PI = 3.14159265358979323846;
-
 function D2R(L) {
-  return L * (PI / 180.0);
+  return L * (Math.PI / 180.0);
 }
 
 class _mat4 {

@@ -1,5 +1,9 @@
 import { vertex, Timer, mat4, vec3, primitive } from "./lib.js";
 
+function D2R(L) {
+  return L * (Math.PI / 180.0);
+}
+
 class Figure {
   constructor() {
     this.vertexes = [];
@@ -90,6 +94,75 @@ export class Tetrahedron extends Figure {
       [left, right, top],
       [right, front, top],
       [front, right, left],
+    ];
+  }
+}
+
+export class Octahedron extends Figure {
+  constructor() {
+    super();
+    const left = vec3(-0.5, 0, 0),
+      far = vec3(0, 0.5, 0),
+      right = vec3(0.5, 0, 0),
+      near = vec3(0, -0.5, 0),
+      down = vec3(0, 0, -0.5),
+      up = vec3(0, 0, 0.5);
+    this.vertexes = [
+      [near, left, up],
+      [near, right, up],
+      [near, right, down],
+      [near, left, down],
+      [left, far, up],
+      [left, far, down],
+      [right, far, up],
+      [right, far, down],
+    ];
+  }
+}
+
+export class Icosahedron extends Figure {
+  constructor() {
+    super();
+    const cos36 = Math.cos(D2R(36)) / 2,
+      sin36 = Math.sin(D2R(36)) / 2,
+      cos72 = Math.cos(D2R(72)) / 2,
+      sin72 = Math.sin(D2R(72)) / 2,
+      d = Math.sqrt(2 * (cos36 - sin36)) / 2,
+      r = Math.sqrt((d * d) / 4 + 1) / 2,
+      down = vec3(0, 0, -r),
+      up = vec3(0, 0, r),
+      dr = vec3(1 / 2, 0, -d),
+      dru = vec3(cos72, sin72, -d),
+      dlu = vec3(-cos36, sin36, -d),
+      dld = vec3(-cos36, -sin36, -d),
+      drd = vec3(cos72, -sin72, -d),
+      ul = vec3(-1 / 2, 0, d),
+      ulu = vec3(-cos72, sin72, d),
+      uru = vec3(cos36, sin36, d),
+      urd = vec3(cos36, -sin36, d),
+      uld = vec3(-cos72, -sin72, d);
+
+    this.vertexes = [
+      [down, dr, dru], // down corner
+      [down, dru, dlu],
+      [down, dlu, dld],
+      [down, dld, drd],
+      [down, drd, dr],
+      [dr, uru, dru], // center start
+      [uru, dru, ulu],
+      [dru, ulu, dlu],
+      [ulu, dlu, ul],
+      [dlu, ul, dld],
+      [ul, dld, uld],
+      [dld, uld, drd],
+      [uld, drd, urd],
+      [drd, urd, dr],
+      [urd, dr, uru], // center end
+      [up, ul, ulu], // up corner
+      [up, ulu, uru],
+      [up, uru, urd],
+      [up, urd, uld],
+      [up, uld, ul],
     ];
   }
 }

@@ -19,7 +19,7 @@ import { Cam } from "./matlib/camera.js";
 import { primitive, vertex } from "./reslib/primitives.js";
 import { Render } from "./render.js";
 import { Timer } from "./timer/timer.js";
-import { Cube, Tetrahedron } from "./figure.js";
+import { Cube, Tetrahedron, Octahedron, Icosahedron } from "./figure.js";
 
 export {
   mat4,
@@ -34,6 +34,8 @@ export {
   Timer,
   Cube,
   Tetrahedron,
+  Octahedron,
+  Icosahedron,
 };
 
 console.log("Load done.");
