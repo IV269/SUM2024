@@ -141,6 +141,7 @@ class _primitive {
     m.frustum(-rx / 2, rx / 2, -ry / 2, ry / 2, rnd.projDist, rnd.farClip);
 
     m = world.mul(mat4());
+    console.log([].concat(...m.m));
     rnd.gl.uniformMatrix4fv(
       rnd.matrProjLoc,
       false,
