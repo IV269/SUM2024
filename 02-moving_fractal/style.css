@@ -1,0 +1,22 @@
+.rect {
+  color: #f000f0;
+  width: 100px;
+  height: 100px;
+}
+
+canvas {
+  width: auto;
+  height: 40%;
+}
+
+body {
+  background: green;
+}
+
+#wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding-top: 30%;
+  padding-bottom: 30%;
+}

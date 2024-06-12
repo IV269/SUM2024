@@ -1,0 +1,8 @@
+[user]
+	name = PML30\\cgsg206\\SUM2024	
+	email = itw2010w@gmail.com
+[difftool "sourcetree"]
+	cmd = "'' "
+[mergetool "sourcetree"]
+	cmd = "'' "
+	trustExitCode = true
